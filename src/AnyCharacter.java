@@ -4,8 +4,4 @@ public class AnyCharacter extends RegexCharacter {
         super('.');
     }
 
-    @Override
-    public boolean checkValidRegexSyntax(char[] patt, int index) {
-        return false;
-    }
 }

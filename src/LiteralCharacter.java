@@ -1,8 +1,7 @@
 public class LiteralCharacter extends RegexCharacter {
 
-    protected LiteralCharacter() {
-        // Ignore this token, required it to satisfy constructor requirements
-        super('a');
+    protected LiteralCharacter(char c) {
+        super(c);
     }
 
     public static boolean isLiteralCharacter(char c) {
@@ -11,11 +10,7 @@ public class LiteralCharacter extends RegexCharacter {
 
     @Override
     public boolean isTokenChar(char c) {
-        return isLiteralCharacter(c);
+        return isLiteralCharacter(c) && super.isTokenChar(c);
     }
 
-    @Override
-    public boolean checkValidRegexSyntax(char[] patt, int index) {
-        return false;
-    }
 }
