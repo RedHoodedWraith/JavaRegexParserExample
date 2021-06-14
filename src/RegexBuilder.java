@@ -13,19 +13,45 @@ public class RegexBuilder {
         return RegexElement.buildRegexElement(regexPattern, 0);
     }
 
-    public static ArrayList<RegexElement> buildRegexPatternsFromFile(String filePathLoc) throws FileNotFoundException, RegexSyntaxError {
-        ArrayList<RegexElement> regexElements = new ArrayList<>();
+    public static ArrayList<String> importPatterns(String filePathLoc) throws FileNotFoundException {
+        ArrayList<String> lines = new ArrayList<>();
         File filePatt = new File(filePathLoc);
         Scanner sc = new Scanner(filePatt);
+
+        // Saves the lines into an arrayList
         while(sc.hasNextLine()) {
-            String patt = sc.nextLine();
-            regexElements.add(buildRegex(patt));
+            lines.add(sc.nextLine());
         }
+
+        return lines;
+    }
+
+    public static ArrayList<RegexElement> buildRegexPatternsFromFile(ArrayList<String> lines) {
+        ArrayList<RegexElement> regexElements = new ArrayList<>();
+
+        // Index in text file starts at 1
+        int i = 1;
+        for(String patt : lines) {
+            System.out.print("Reading Line [" + i + "]: " + patt + "\t");
+            try {
+                regexElements.add(buildRegex(patt));
+                System.out.println("");
+            } catch (RegexSyntaxError regexSyntaxError) {
+                System.out.println("[SYNTAX ERROR]");
+                regexSyntaxError.printStackTrace();
+            }
+            i++;
+        }
+
         return regexElements;
     }
 
     public static void main(String... args) {
-
+        try {
+            ArrayList<RegexElement> elems = buildRegexPatternsFromFile(importPatterns("expressions.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }

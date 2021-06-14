@@ -38,11 +38,11 @@ public abstract class RegexElement {
         Collections.addAll(validNextTokens, validNextTokensRaw);
 
         int nextIndex = index + 1;
-        if(checkValidRegexSyntax(patt, nextIndex)) {
+        if(checkValidRegexSyntax(patt, index)) {
             this.nextElement = buildRegexElement(patt, nextIndex);
         } else {
             char[] remainingPatt = Arrays.copyOfRange(patt, nextIndex, patt.length);
-            throw new RegexSyntaxError(tokenChar, remainingPatt);
+            throw new RegexSyntaxError(tokenChar, index, remainingPatt, patt);
         }
     }
 
