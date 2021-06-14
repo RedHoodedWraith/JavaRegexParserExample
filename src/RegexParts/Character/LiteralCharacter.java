@@ -1,3 +1,7 @@
+package RegexParts.Character;
+
+import RegexParts.RegexElement;
+
 public class LiteralCharacter extends RegexCharacter {
 
     protected LiteralCharacter(char c) {
@@ -5,7 +9,7 @@ public class LiteralCharacter extends RegexCharacter {
     }
 
     public static boolean isLiteralCharacter(char c) {
-        return !SPECIAL_CHARACTERS_LIST.contains(c);
+        return !RegexElement.SPECIAL_CHARACTERS_LIST.contains(c);
     }
 
     @Override

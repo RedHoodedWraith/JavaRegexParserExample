@@ -1,3 +1,7 @@
+package RegexParts;
+
+import RegexParts.Character.LiteralCharacter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
