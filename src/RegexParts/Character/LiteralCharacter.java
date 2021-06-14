@@ -1,11 +1,11 @@
 package RegexParts.Character;
 
-import RegexParts.Exceptions.InvalidNextCharacterPatternException;
+import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.RegexElement;
 
 public class LiteralCharacter extends RegexCharacter {
 
-    public LiteralCharacter(char[] patt, int index, char c) throws InvalidNextCharacterPatternException {
+    public LiteralCharacter(char[] patt, int index, char c) throws RegexSyntaxError {
         super(patt, index, c);
     }
 

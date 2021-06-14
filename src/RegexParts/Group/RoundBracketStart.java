@@ -1,10 +1,10 @@
 package RegexParts.Group;
 
-import RegexParts.Exceptions.InvalidNextCharacterPatternException;
+import RegexParts.Exceptions.RegexSyntaxError;
 
 public class RoundBracketStart extends RoundBracketTemplate {
 
-    public RoundBracketStart(char[] patt, int index) throws InvalidNextCharacterPatternException {
+    public RoundBracketStart(char[] patt, int index) throws RegexSyntaxError {
         super(patt, index, '(', true, false, '.', '(', ')');
     }
 

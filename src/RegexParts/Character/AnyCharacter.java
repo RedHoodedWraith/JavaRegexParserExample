@@ -1,10 +1,10 @@
 package RegexParts.Character;
 
-import RegexParts.Exceptions.InvalidNextCharacterPatternException;
+import RegexParts.Exceptions.RegexSyntaxError;
 
 public class AnyCharacter extends RegexCharacter {
 
-    public AnyCharacter(char[] patt, int index) throws InvalidNextCharacterPatternException {
+    public AnyCharacter(char[] patt, int index) throws RegexSyntaxError {
         super(patt, index, '.');
     }
 
