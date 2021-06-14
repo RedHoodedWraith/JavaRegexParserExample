@@ -2,8 +2,8 @@ package RegexParts.Character;
 
 public class AnyCharacter extends RegexCharacter {
 
-    protected AnyCharacter() {
-        super('.');
+    public AnyCharacter(char[] patt, int index) {
+        super(patt, index, '.');
     }
 
 }

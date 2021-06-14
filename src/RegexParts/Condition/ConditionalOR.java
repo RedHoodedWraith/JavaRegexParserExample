@@ -4,8 +4,8 @@ import RegexParts.RegexElement;
 
 public class ConditionalOR extends RegexElement {
 
-    protected ConditionalOR() {
-        super('|', true, false, '.', '(');
+    public ConditionalOR(char[] patt, int index) {
+        super(patt, index, '|', true, false, '.', '(');
     }
 
 }

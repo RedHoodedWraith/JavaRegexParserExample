@@ -2,8 +2,8 @@ package RegexParts.Group;
 
 public class RoundBracketStart extends RoundBracketTemplate {
 
-    protected RoundBracketStart() {
-        super('(', true, false, '.', '(', ')');
+    public RoundBracketStart(char[] patt, int index) {
+        super(patt, index, '(', true, false, '.', '(', ')');
     }
 
 }

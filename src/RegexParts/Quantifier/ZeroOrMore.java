@@ -4,8 +4,8 @@ import RegexParts.RegexElement;
 
 public class ZeroOrMore extends RegexElement {
 
-    protected ZeroOrMore() {
-        super('*', true, true, '.', '|', '(', ')');
+    public ZeroOrMore(char[] patt, int index) {
+        super(patt, index, '*', true, true, '.', '|', '(', ')');
     }
 
 }

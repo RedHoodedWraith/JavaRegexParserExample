@@ -4,8 +4,8 @@ import RegexParts.RegexElement;
 
 public class LiteralCharacter extends RegexCharacter {
 
-    protected LiteralCharacter(char c) {
-        super(c);
+    public LiteralCharacter(char[] patt, int index, char c) {
+        super(patt, index, c);
     }
 
     public static boolean isLiteralCharacter(char c) {
