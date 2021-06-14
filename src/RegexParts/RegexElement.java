@@ -3,6 +3,7 @@ package RegexParts;
 import RegexParts.Character.AnyCharacter;
 import RegexParts.Character.LiteralCharacter;
 import RegexParts.Condition.ConditionalOR;
+import RegexParts.Exceptions.RegexIncompleteGroupError;
 import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.Group.RoundBracketEnd;
 import RegexParts.Group.RoundBracketStart;
@@ -31,7 +32,7 @@ public abstract class RegexElement {
 
     private final RegexElement nextElement;
 
-    protected RegexElement(char[] patt, int index, char tokenChar, boolean nextTokenCanBeLiteral,
+    protected RegexElement(char[] patt, int index, int groupLayer, char tokenChar, boolean nextTokenCanBeLiteral,
                            boolean nextTokenCanBeEnd, Character... validNextTokensRaw)
             throws RegexSyntaxError {
         this.tokenChar = tokenChar;
@@ -42,19 +43,24 @@ public abstract class RegexElement {
 
         int nextIndex = index + 1;
         if(checkValidRegexSyntax(patt, index)) {
-            this.nextElement = buildRegexElement(patt, nextIndex);
+            this.nextElement = buildRegexElement(patt, nextIndex, groupLayer);
         } else {
             char[] remainingPatt = Arrays.copyOfRange(patt, nextIndex, patt.length);
             throw new RegexSyntaxError(tokenChar, index, remainingPatt, patt);
         }
     }
 
-    public static RegexElement buildRegexElement(char[] patt, int index) throws RegexSyntaxError {
+    protected static RegexElement buildRegexElement(char[] patt, int index, int groupLayer) throws RegexSyntaxError {
         assert index >= 0 && index <= patt.length;
 
         // Reached String End
-        if(index >= patt.length)
+        if(index >= patt.length) {
+            // Throws an exception if the brackets are not correctly opened and closed
+            if(groupLayer != 0)
+                throw new RegexIncompleteGroupError(patt);
             return null;
+        }
+
 
         char c = patt[index];
 
@@ -63,13 +69,17 @@ public abstract class RegexElement {
         }
 
         return switch (c) {
-            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index);
-            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index);
-            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index);
-            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index);
-            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index);
-            default -> new LiteralCharacter(patt, index, c);
+            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index, groupLayer);
+            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index, groupLayer);
+            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index, groupLayer);
+            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index, groupLayer);
+            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index, groupLayer);
+            default -> new LiteralCharacter(patt, index, groupLayer, c);
         };
+    }
+
+    public static RegexElement buildRegexElement(char[] patt) throws RegexSyntaxError {
+        return buildRegexElement(patt, 0, 0);
     }
 
     public static boolean isLiteralCharacter(char c) {

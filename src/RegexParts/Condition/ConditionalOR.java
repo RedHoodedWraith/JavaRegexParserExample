@@ -5,8 +5,8 @@ import RegexParts.RegexElement;
 
 public class ConditionalOR extends RegexElement {
 
-    public ConditionalOR(char[] patt, int index) throws RegexSyntaxError {
-        super(patt, index, '|', true, true, '.', '|', '(');
+    public ConditionalOR(char[] patt, int index, int groupLayer) throws RegexSyntaxError {
+        super(patt, index, groupLayer,'|', true, true, '.', '|', '(');
     }
 
 }

@@ -12,7 +12,7 @@ public class RegexBuilder {
 
     public static RegexElement buildRegex(String regexPatternStr) throws RegexSyntaxError {
         char[] regexPattern = regexPatternStr.toCharArray();
-        return RegexElement.buildRegexElement(regexPattern, 0);
+        return RegexElement.buildRegexElement(regexPattern);
     }
 
     public static ArrayList<String> importPatterns(String filePathLoc) throws FileNotFoundException {
