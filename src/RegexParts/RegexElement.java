@@ -3,6 +3,7 @@ package RegexParts;
 import RegexParts.Character.AnyCharacter;
 import RegexParts.Character.LiteralCharacter;
 import RegexParts.Condition.ConditionalOR;
+import RegexParts.Exceptions.InvalidNextCharacterPatternException;
 import RegexParts.Group.RoundBracketEnd;
 import RegexParts.Group.RoundBracketStart;
 import RegexParts.Quantifier.ZeroOrMore;
@@ -27,16 +28,23 @@ public abstract class RegexElement {
 
     private final RegexElement nextElement;
 
-    protected RegexElement(char[] patt, int index, char tokenChar, boolean nextTokenCanBeLiteral, boolean nextTokenCanBeEnd, Character... validNextTokensRaw){
+    protected RegexElement(char[] patt, int index, char tokenChar, boolean nextTokenCanBeLiteral, boolean nextTokenCanBeEnd, Character... validNextTokensRaw) throws InvalidNextCharacterPatternException {
         this.tokenChar = tokenChar;
         this.nextTokenCanBeLiteral = nextTokenCanBeLiteral;
         this.nextTokenCanBeEnd = nextTokenCanBeEnd;
         this.validNextTokens = new ArrayList<>();
         Collections.addAll(validNextTokens, validNextTokensRaw);
-        this.nextElement = buildRegexElement(patt, ++index);
+
+        int nextIndex = index + 1;
+        if(checkValidRegexSyntax(patt, nextIndex)) {
+            this.nextElement = buildRegexElement(patt, nextIndex);
+        } else {
+            char[] remainingPatt = Arrays.copyOfRange(patt, nextIndex, patt.length);
+            throw new InvalidNextCharacterPatternException(tokenChar, remainingPatt);
+        }
     }
 
-    public static RegexElement buildRegexElement(char[] patt, int index) {
+    public static RegexElement buildRegexElement(char[] patt, int index) throws InvalidNextCharacterPatternException {
         assert index >= 0 && index <= patt.length;
 
         // Reached String End
