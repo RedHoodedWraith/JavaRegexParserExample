@@ -8,4 +8,8 @@ public class RoundBracketEnd extends RoundBracketTemplate {
         super(patt, index, --groupLayer,')', true, true, '.', '|', '*', '(', ')');
     }
 
+    @Override
+    public boolean evaluate(char[] inputTarget, int index) {
+        return false;
+    }
 }

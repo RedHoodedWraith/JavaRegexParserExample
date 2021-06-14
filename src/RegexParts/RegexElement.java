@@ -86,8 +86,18 @@ public abstract class RegexElement {
         return LiteralCharacter.isLiteralCharacter(c);
     }
 
+    public abstract boolean evaluate(char[] inputTarget, int index);
+
+    public boolean evaluate(String input) {
+        return this.evaluate(input.toCharArray(), 0);
+    }
+
     public boolean isTokenChar(char c) {
         return c == tokenChar;
+    }
+
+    public boolean isNextTokenEnd() {
+        return getNextElement() == null;
     }
 
     protected boolean isNextTokenCanBeEnd() {

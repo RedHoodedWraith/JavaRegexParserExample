@@ -8,4 +8,17 @@ public class AnyCharacter extends RegexCharacter {
         super(patt, index, groupLayer,'.');
     }
 
+    @Override
+    public boolean evaluate(char[] inputTarget, int index) {
+        char c = inputTarget[index];
+
+        if(isLiteralCharacter(c)) {
+            if(isNextTokenEnd())
+                return index == inputTarget.length-1;
+
+            return this.getNextElement().evaluate(inputTarget, index + 1);
+        }
+
+        return false;
+    }
 }

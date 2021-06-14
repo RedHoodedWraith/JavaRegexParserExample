@@ -18,4 +18,17 @@ public class LiteralCharacter extends RegexCharacter {
         return isLiteralCharacter(c) && super.isTokenChar(c);
     }
 
+    @Override
+    public boolean evaluate(char[] inputTarget, int index) {
+        char c = inputTarget[index];
+
+        if(isTokenChar(c)) {
+            if(isNextTokenEnd())
+                return true;
+
+            return this.getNextElement().evaluate(inputTarget, index + 1);
+        }
+
+        return false;
+    }
 }

@@ -9,4 +9,8 @@ public class ZeroOrMore extends RegexElement {
         super(patt, index, groupLayer, '*', true, true, '.', '|', '(', ')');
     }
 
+    @Override
+    public boolean evaluate(char[] inputTarget, int index) {
+        return false;
+    }
 }
