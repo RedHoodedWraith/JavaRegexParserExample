@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 public class RegexBuilder {
 
+    public static final String DEFAULT_PATTERN_FILE = "expressions.txt";
+
     public static RegexElement buildRegex(String regexPatternStr) throws RegexSyntaxError {
         char[] regexPattern = regexPatternStr.toCharArray();
         return RegexElement.buildRegexElement(regexPattern, 0);
@@ -26,7 +28,7 @@ public class RegexBuilder {
         return lines;
     }
 
-    public static ArrayList<RegexElement> buildRegexPatternsFromFile(ArrayList<String> lines) {
+    public static ArrayList<RegexElement> buildRegexPatternsFromStringList(ArrayList<String> lines) {
         ArrayList<RegexElement> regexElements = new ArrayList<>();
 
         // Index in text file starts at 1
@@ -48,7 +50,7 @@ public class RegexBuilder {
 
     public static void main(String... args) {
         try {
-            ArrayList<RegexElement> elems = buildRegexPatternsFromFile(importPatterns("expressions.txt"));
+            ArrayList<RegexElement> elems = buildRegexPatternsFromStringList(importPatterns(DEFAULT_PATTERN_FILE));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

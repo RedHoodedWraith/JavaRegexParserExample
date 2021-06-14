@@ -22,6 +22,9 @@ public abstract class RegexElement {
             SPEC_CHAR_GROUP_OPEN, SPEC_CHAR_GROUP_CLOSE};
     public static final ArrayList<Character> SPECIAL_CHARACTERS_LIST = new ArrayList<>(Arrays.asList(SPECIAL_CHARACTERS));
 
+    public static final Character[] INVALID_FIRST_CHARACTERS = {SPEC_CHAR_QUANT, SPEC_CHAR_GROUP_CLOSE};
+    public static final ArrayList<Character> INVALID_FIRST_CHARACTERS_LIST = new ArrayList<>(Arrays.asList(INVALID_FIRST_CHARACTERS));
+
     private final char tokenChar;
     private final ArrayList<Character> validNextTokens;
     private final boolean nextTokenCanBeLiteral, nextTokenCanBeEnd;
@@ -54,6 +57,10 @@ public abstract class RegexElement {
             return null;
 
         char c = patt[index];
+
+        if(index == 0 && INVALID_FIRST_CHARACTERS_LIST.contains(c)){
+            throw new RegexSyntaxError(c, index, patt, patt);
+        }
 
         return switch (c) {
             case SPEC_CHAR_ANY -> new AnyCharacter(patt, index);
