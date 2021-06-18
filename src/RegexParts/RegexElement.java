@@ -32,7 +32,7 @@ public abstract class RegexElement {
 
     private final char tokenChar;
     private final ArrayList<Character> validNextTokens;
-    private final boolean nextTokenCanBeLiteral, nextTokenCanBeEnd;
+    private final boolean nextTokenCanBeLiteral, canBeLastElement;
 
     private final RegexElement nextElement;
 
@@ -41,7 +41,7 @@ public abstract class RegexElement {
             throws RegexSyntaxError {
         this.tokenChar = tokenChar;
         this.nextTokenCanBeLiteral = nextTokenCanBeLiteral;
-        this.nextTokenCanBeEnd = nextTokenCanBeEnd;
+        this.canBeLastElement = nextTokenCanBeEnd;
         this.validNextTokens = new ArrayList<>();
         Collections.addAll(validNextTokens, validNextTokensRaw);
 
@@ -108,18 +108,23 @@ public abstract class RegexElement {
         return this.evaluate(input.toCharArray(), 0);
     }
 
-    protected int evaluateNextTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex) {
-        return element.evaluate(inputTarget, ++currentIndex);
+    protected int evaluateTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex) {
+        if(element == null) {
+            return FAIL_INDEX_VALUE;
+        }
+        return element.evaluate(inputTarget, currentIndex);
     }
 
-    protected int evaluateNextTargetWithNextElement(char[] inputTarget, int currentIndex) {
-        if(isNextElementNull())
-            return currentIndex;
-        return this.evaluateNextTargetWithElement(this.getNextElement(), inputTarget, currentIndex);
+    protected int evaluateNextTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex) {
+        return evaluateTargetWithElement(element, inputTarget, ++currentIndex);
     }
 
     protected int evaluateTargetWithNextElement(char[] inputTarget, int currentIndex) {
-        return getNextElement().evaluate(inputTarget, currentIndex);
+        return evaluateTargetWithElement(this.getNextElement(), inputTarget, currentIndex);
+    }
+
+    protected int evaluateNextTargetWithNextElement(char[] inputTarget, int currentIndex) {
+        return evaluateTargetWithElement(this.getNextElement(), inputTarget, ++currentIndex);
     }
 
     public boolean isTokenChar(char c) {
@@ -130,12 +135,8 @@ public abstract class RegexElement {
         return getNextElement() == null;
     }
 
-    public boolean canTargetTokenBeEnd() {
-        return isNextElementNull();
-    }
-
     protected boolean canElementBeEnd() {
-        return nextTokenCanBeEnd;
+        return canBeLastElement;
     }
 
     public boolean isNextTokenValid(Character c) {

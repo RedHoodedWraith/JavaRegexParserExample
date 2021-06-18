@@ -26,7 +26,6 @@ public class RoundBracketEnd extends RoundBracketTemplate {
 
     @Override
     public int evaluate(char[] inputTarget, int index) {
-        int iTLength = inputTarget.length;
 
         // Repeats if Next in Pattern is Zero or More
         int updatedIndex = isNextTargetRepeatable() ?
