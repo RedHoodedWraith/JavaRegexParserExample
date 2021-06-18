@@ -33,13 +33,15 @@ public abstract class RegexElement {
     private final char tokenChar;
     private final ArrayList<Character> validNextTokens;
     private final boolean nextTokenCanBeLiteral, canBeLastElement;
+    private boolean firstElementState;
 
     private final RegexElement nextElement;
 
-    protected RegexElement(char[] patt, int index, int groupLayer, char tokenChar, boolean nextTokenCanBeLiteral,
-                           boolean nextTokenCanBeEnd, Character... validNextTokensRaw)
+    protected RegexElement(char[] patt, int index, int groupLayer, char tokenChar, boolean firstElementState,
+                           boolean nextTokenCanBeLiteral, boolean nextTokenCanBeEnd, Character... validNextTokensRaw)
             throws RegexSyntaxError {
         this.tokenChar = tokenChar;
+        this.firstElementState = firstElementState;
         this.nextTokenCanBeLiteral = nextTokenCanBeLiteral;
         this.canBeLastElement = nextTokenCanBeEnd;
         this.validNextTokens = new ArrayList<>();
@@ -54,6 +56,12 @@ public abstract class RegexElement {
         }
     }
 
+    protected RegexElement(char[] patt, int index, int groupLayer, char tokenChar,
+                           boolean nextTokenCanBeLiteral, boolean nextTokenCanBeEnd, Character... validNextTokensRaw)
+            throws RegexSyntaxError {
+        this(patt, index, groupLayer, tokenChar, false, nextTokenCanBeLiteral, nextTokenCanBeEnd, validNextTokensRaw);
+    }
+
     protected static RegexElement buildRegexElement(char[] patt, int index, int groupLayer) throws RegexSyntaxError {
         assert index >= 0 && index <= patt.length;
 
@@ -64,7 +72,6 @@ public abstract class RegexElement {
                 throw new RegexIncompleteGroupError(patt);
             return null;
         }
-
 
         char c = patt[index];
 
@@ -109,6 +116,14 @@ public abstract class RegexElement {
     }
 
     public abstract int evaluate(char[] inputTarget, int index, boolean resultFromPreviousElement);
+
+    public int skipToMiniEnd(char[] inputTarget, int index, boolean resultFromPreviousElement) {
+        RegexElement elm = this;
+        while(!(elm == null || elm instanceof ConditionalOR)) {
+            elm = elm.getNextElement();
+        }
+        return evaluateTargetWithElement(elm, inputTarget, index, resultFromPreviousElement);
+    }
 
     public int evaluateTarget(String input) {
         return this.evaluate(input.toCharArray(), 0, false);
@@ -168,6 +183,7 @@ public abstract class RegexElement {
 
     public static void pairStartEndGroupElements(RegexElement firstElement, char[] pattern) throws RegexOtherError {
         RegexElement elm = firstElement;
+        elm.setAsFirstElement();
         int layer = 0;
         Stack<RoundBracketStart> startBracketCollect = new Stack<>();
 
@@ -188,5 +204,13 @@ public abstract class RegexElement {
 
         if(layer != 0)
             throw new RegexIncompleteGroupError(pattern);
+    }
+
+    public boolean isFirstElement() {
+        return firstElementState;
+    }
+
+    public void setAsFirstElement() {
+        this.firstElementState = true;
     }
 }

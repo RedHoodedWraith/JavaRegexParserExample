@@ -16,9 +16,19 @@ public abstract class RegexCharacter extends RegexElement {
     public int evaluate(char[] inputTarget, int index, boolean resultFromPreviousElement) {
         int iTLength = inputTarget.length;
 
-        // Returns FAIL_INDEX_VALUE if Target Array is empty (length is zero)
-        // OR if index entered is equal or greater than the Target Array length
-        if(iTLength <= 0 || index >= iTLength) {
+        //  If Target Array is empty (length is zero)
+        //  Returns FAIL_INDEX_VALUE or proceeds to Conditional Element if it is next
+        if(iTLength <= 0) {
+            // If evaluation failed and next element is Conditional
+            if(!isNextElementNull() && getNextElement() instanceof ConditionalOR) {
+                return evaluateTargetWithNextElement(inputTarget, index, false);
+            } else {
+                return FAIL_INDEX_VALUE;
+            }
+        }
+
+        // Returns if index entered is equal or greater than the Target Array length
+        if(index >= iTLength) {
             return FAIL_INDEX_VALUE;
         }
 
@@ -29,7 +39,7 @@ public abstract class RegexCharacter extends RegexElement {
         if(isValidToken(c)) {
 
             // If There is a Next Pattern Element
-            if(!isNextElementNull()) {
+            if(!isNextElementNull() && !(this.getNextElement() instanceof ConditionalOR)) {
                 // Check Next Element with next Target Token with true/regex passed state
                 return evaluateNextTargetWithNextElement(inputTarget, index);
             }
@@ -39,13 +49,10 @@ public abstract class RegexCharacter extends RegexElement {
             }
 
         }
-        // If evaluation failed and next element is Conditional
-        else if(!isNextElementNull() && getNextElement() instanceof ConditionalOR) {
-            return evaluateTargetWithNextElement(inputTarget, index, false);
+
+        if(!isNextElementNull()) {
+            return skipToMiniEnd(inputTarget, index, resultFromPreviousElement);
         }
-
-
-
 
         // Returns FAIL_INDEX_VALUE if None of the conditions above were met
         return FAIL_INDEX_VALUE;
