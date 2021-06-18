@@ -102,29 +102,29 @@ public abstract class RegexElement {
         return LiteralCharacter.isLiteralCharacter(c);
     }
 
-    public abstract int evaluate(char[] inputTarget, int index);
+    public abstract int evaluate(char[] inputTarget, int index, boolean resultFromPreviousElement);
 
     public int evaluateTarget(String input) {
-        return this.evaluate(input.toCharArray(), 0);
+        return this.evaluate(input.toCharArray(), 0, false);
     }
 
-    protected int evaluateTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex) {
+    protected int evaluateTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex, boolean resultFromPreviousElement) {
         if(element == null) {
             return FAIL_INDEX_VALUE;
         }
-        return element.evaluate(inputTarget, currentIndex);
+        return element.evaluate(inputTarget, currentIndex, resultFromPreviousElement);
     }
 
-    protected int evaluateNextTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex) {
-        return evaluateTargetWithElement(element, inputTarget, ++currentIndex);
+    protected int evaluateNextTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex, boolean resultFromPreviousElement) {
+        return evaluateTargetWithElement(element, inputTarget, ++currentIndex, resultFromPreviousElement);
     }
 
-    protected int evaluateTargetWithNextElement(char[] inputTarget, int currentIndex) {
-        return evaluateTargetWithElement(this.getNextElement(), inputTarget, currentIndex);
+    protected int evaluateTargetWithNextElement(char[] inputTarget, int currentIndex, boolean resultFromPreviousElement) {
+        return evaluateTargetWithElement(this.getNextElement(), inputTarget, currentIndex, resultFromPreviousElement);
     }
 
-    protected int evaluateNextTargetWithNextElement(char[] inputTarget, int currentIndex) {
-        return evaluateTargetWithElement(this.getNextElement(), inputTarget, ++currentIndex);
+    protected int evaluateNextTargetWithNextElement(char[] inputTarget, int currentIndex, boolean resultFromPreviousElement) {
+        return evaluateTargetWithElement(this.getNextElement(), inputTarget, ++currentIndex, resultFromPreviousElement);
     }
 
     public boolean isTokenChar(char c) {

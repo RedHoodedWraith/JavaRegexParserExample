@@ -11,7 +11,7 @@ public class ZeroOrMore extends RegexElement {
     }
 
     @Override
-    public int evaluate(char[] inputTarget, int index) {
+    public int evaluate(char[] inputTarget, int index, boolean resultFromPreviousElement) {
         return -1;
     }
 }

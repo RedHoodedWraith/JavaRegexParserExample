@@ -25,11 +25,11 @@ public class RoundBracketEnd extends RoundBracketTemplate {
     }
 
     @Override
-    public int evaluate(char[] inputTarget, int index) {
+    public int evaluate(char[] inputTarget, int index, boolean resultFromPreviousElement) {
 
         // Repeats if Next in Pattern is Zero or More
         int updatedIndex = isNextTargetRepeatable() ?
-                evaluateNextTargetWithElement(this.getStartOfCurrentGroup(), inputTarget, index) : index;
+                evaluateNextTargetWithElement(this.getStartOfCurrentGroup(), inputTarget, index, resultFromPreviousElement) : index;
 
         // Use current index value if post recursion value is FAIL_INDEX_VALUE
         updatedIndex = updatedIndex != FAIL_INDEX_VALUE ? updatedIndex : index;
@@ -39,9 +39,9 @@ public class RoundBracketEnd extends RoundBracketTemplate {
             // If Recursive Group Search Succeeded
             if(updatedIndex < 0)
                 // Check Next Element with next Target Token with original index
-                return evaluateTargetWithNextElement(inputTarget, index);
+                return evaluateTargetWithNextElement(inputTarget, index, resultFromPreviousElement);
             // Check Next Element with next Target Token with updated index
-            return evaluateTargetWithNextElement(inputTarget, updatedIndex);
+            return evaluateTargetWithNextElement(inputTarget, updatedIndex, resultFromPreviousElement);
         }
         // If Next Target Token is End
         else if(isFinalTargetChar(inputTarget, updatedIndex)) {

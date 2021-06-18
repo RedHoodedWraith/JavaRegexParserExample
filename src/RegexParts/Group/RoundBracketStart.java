@@ -10,7 +10,7 @@ public class RoundBracketStart extends RoundBracketTemplate {
     }
 
     @Override
-    public int evaluate(char[] inputTarget, int index) {
-        return evaluateTargetWithNextElement(inputTarget, index);
+    public int evaluate(char[] inputTarget, int index, boolean resultFromPreviousElement) {
+        return evaluateTargetWithNextElement(inputTarget, index, resultFromPreviousElement);
     }
 }

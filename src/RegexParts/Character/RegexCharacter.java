@@ -3,8 +3,6 @@ package RegexParts.Character;
 import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.RegexElement;
 
-import java.util.Arrays;
-
 public abstract class RegexCharacter extends RegexElement {
 
     protected RegexCharacter(char[] patt, int index, int groupLayer, char tokenChar) throws RegexSyntaxError {
@@ -14,16 +12,12 @@ public abstract class RegexCharacter extends RegexElement {
     protected abstract boolean isValidToken(char c);
 
     @Override
-    public int evaluate(char[] inputTarget, int index) {
+    public int evaluate(char[] inputTarget, int index, boolean resultFromPreviousElement) {
         int iTLength = inputTarget.length;
 
         // Returns FAIL_INDEX_VALUE if Target Array is empty (length is zero)
-        if(iTLength <= 0) {
-            return FAIL_INDEX_VALUE;
-        }
-
-        // Throws an exception if an index entered is equal or greater than the Target Array length
-        if(index >= iTLength) {
+        // OR if index entered is equal or greater than the Target Array length
+        if(iTLength <= 0 || index >= iTLength) {
             return FAIL_INDEX_VALUE;
         }
 
@@ -36,7 +30,7 @@ public abstract class RegexCharacter extends RegexElement {
             // If Next Element is Not End (If Next Token is Not Null)
             if(!isNextElementNull()) {
                 // Check Next Element with next Target Token
-                return evaluateNextTargetWithNextElement(inputTarget, index);
+                return evaluateNextTargetWithNextElement(inputTarget, index, resultFromPreviousElement);
             }
             // If This is the final Target Token
             else if(isFinalTargetChar(inputTarget, index)) {
