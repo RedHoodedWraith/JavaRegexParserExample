@@ -22,6 +22,7 @@ public abstract class RegexCharacter extends RegexElement {
             return false;
         }
 
+        // Throws an exception if an index entered is equal or greater than the Target Array length
         if(index >= iTLength) {
             throw new NullPointerException("Invalid Index: " + index +
                     "\nTarget Length: " + iTLength +

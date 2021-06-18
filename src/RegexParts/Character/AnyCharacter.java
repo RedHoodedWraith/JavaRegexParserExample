@@ -12,6 +12,6 @@ public class AnyCharacter extends RegexCharacter {
 
     @Override
     protected boolean isValidToken(char c) {
-        return isLiteralCharacter(c);
+        return true;
     }
 }
