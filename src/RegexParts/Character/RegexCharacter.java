@@ -39,12 +39,18 @@ public abstract class RegexCharacter extends RegexElement {
         if(isValidToken(c)) {
 
             // If There is a Next Pattern Element
-            if(!isNextElementNull() && !(this.getNextElement() instanceof ConditionalOR)) {
+            if(!isNextElementNull()) {
+                if(!(this.getNextElement() instanceof ConditionalOR))
                 // Check Next Element with next Target Token with true/regex passed state
-                return evaluateNextTargetWithNextElement(inputTarget, index);
+                    return evaluateNextTargetWithNextElement(inputTarget, index, true);
+                else {
+                    if(!isPastMaxIndex(inputTarget, index + 1)) {
+                        return FAIL_INDEX_VALUE;
+                    }
+                }
             }
             // Returns with index If This is the final Target Token
-            else if(isFinalTargetChar(inputTarget, index)) {
+            if(isFinalTargetChar(inputTarget, index)) {
                 return index;
             }
 

@@ -16,9 +16,8 @@ public class ConditionalOR extends RegexElement {
                 (isNextElementNull() || isFirstElement() || getNextElement() instanceof ConditionalOR)) {
             return 0;
         }
-        else if(resultFromPreviousElement) {
-            if(inputTarget.length-index <= 0)
 
+        if(resultFromPreviousElement) {
             return index;
         }
 
