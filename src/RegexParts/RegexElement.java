@@ -33,7 +33,7 @@ public abstract class RegexElement {
     private final RegexElement nextElement;
 
     protected RegexElement(char[] patt, int index, int groupLayer, char tokenChar, boolean nextTokenCanBeLiteral,
-                           boolean nextTokenCanBeEnd, Character... validNextTokensRaw)
+                           boolean nextTokenCanBeEnd, RoundBracketStart groupStart, Character... validNextTokensRaw)
             throws RegexSyntaxError {
         this.tokenChar = tokenChar;
         this.nextTokenCanBeLiteral = nextTokenCanBeLiteral;
@@ -50,7 +50,7 @@ public abstract class RegexElement {
         }
     }
 
-    protected static RegexElement buildRegexElement(char[] patt, int index, int groupLayer) throws RegexSyntaxError {
+    protected static RegexElement buildRegexElement(char[] patt, int index, int groupLayer, RoundBracketStart groupStart) throws RegexSyntaxError {
         assert index >= 0 && index <= patt.length;
 
         // Reached String End
@@ -69,12 +69,12 @@ public abstract class RegexElement {
         }
 
         return switch (c) {
-            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index, groupLayer);
-            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index, groupLayer);
-            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index, groupLayer);
-            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index, groupLayer);
-            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index, groupLayer);
-            default -> new LiteralCharacter(patt, index, groupLayer, c);
+            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index, groupLayer, groupStart);
+            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index, groupLayer, groupStart);
+            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index, groupLayer, groupStart);
+            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index, groupLayer, groupStart);
+            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index, groupLayer, groupStart);
+            default -> new LiteralCharacter(patt, index, groupLayer, c, groupStart);
         };
     }
 
