@@ -4,12 +4,13 @@ import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.Group.RoundBracketStart;
 import RegexParts.RegexElement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class RegexCharacter extends RegexElement {
 
-    protected RegexCharacter(char[] patt, int index, int groupLayer, char tokenChar, RoundBracketStart groupStart) throws RegexSyntaxError {
-        super(patt, index, groupLayer, tokenChar, true, true, groupStart, RegexElement.SPECIAL_CHARACTERS);
+    protected RegexCharacter(char[] patt, int index, int groupLayer, char tokenChar, ArrayList<RoundBracketStart> groupStartList) throws RegexSyntaxError {
+        super(patt, index, groupLayer, tokenChar, true, true, groupStartList, RegexElement.SPECIAL_CHARACTERS);
     }
 
     protected abstract boolean isValidToken(char c);

@@ -33,7 +33,7 @@ public abstract class RegexElement {
     private final RegexElement nextElement;
 
     protected RegexElement(char[] patt, int index, int groupLayer, char tokenChar, boolean nextTokenCanBeLiteral,
-                           boolean nextTokenCanBeEnd, RoundBracketStart groupStart, Character... validNextTokensRaw)
+                           boolean nextTokenCanBeEnd, ArrayList<RoundBracketStart> groupStartList, Character... validNextTokensRaw)
             throws RegexSyntaxError {
         this.tokenChar = tokenChar;
         this.nextTokenCanBeLiteral = nextTokenCanBeLiteral;
@@ -43,14 +43,14 @@ public abstract class RegexElement {
 
         int nextIndex = index + 1;
         if(checkValidRegexSyntax(patt, index)) {
-            this.nextElement = buildRegexElement(patt, nextIndex, groupLayer);
+            this.nextElement = buildRegexElement(patt, nextIndex, groupLayer, groupStartList);
         } else {
             char[] remainingPatt = Arrays.copyOfRange(patt, nextIndex, patt.length);
             throw new RegexSyntaxError(tokenChar, index, remainingPatt, patt);
         }
     }
 
-    protected static RegexElement buildRegexElement(char[] patt, int index, int groupLayer, RoundBracketStart groupStart) throws RegexSyntaxError {
+    protected static RegexElement buildRegexElement(char[] patt, int index, int groupLayer, ArrayList<RoundBracketStart> groupStartList) throws RegexSyntaxError {
         assert index >= 0 && index <= patt.length;
 
         // Reached String End
@@ -69,17 +69,19 @@ public abstract class RegexElement {
         }
 
         return switch (c) {
-            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index, groupLayer, groupStart);
-            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index, groupLayer, groupStart);
-            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index, groupLayer, groupStart);
-            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index, groupLayer, groupStart);
-            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index, groupLayer, groupStart);
-            default -> new LiteralCharacter(patt, index, groupLayer, c, groupStart);
+            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index, groupLayer, groupStartList);
+            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index, groupLayer, groupStartList);
+            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index, groupLayer, groupStartList);
+            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index, groupLayer, groupStartList);
+            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index, groupLayer, groupStartList);
+            default -> new LiteralCharacter(patt, index, groupLayer, c, groupStartList);
         };
     }
 
     public static RegexElement buildRegexElement(char[] patt) throws RegexSyntaxError {
-        return buildRegexElement(patt, 0, 0);
+        ArrayList<RoundBracketStart> groupStartList = new ArrayList<>();
+        groupStartList.add(null);
+        return buildRegexElement(patt, 0, 0, groupStartList);
     }
 
     public static boolean isNextTargetCharEnd(char[] target, int currentIndex) {

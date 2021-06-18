@@ -4,12 +4,12 @@ import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.Group.RoundBracketStart;
 import RegexParts.RegexElement;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class LiteralCharacter extends RegexCharacter {
 
-    public LiteralCharacter(char[] patt, int index, int groupLayer, char c, RoundBracketStart groupStart) throws RegexSyntaxError {
-        super(patt, index, groupLayer, c, groupStart);
+    public LiteralCharacter(char[] patt, int index, int groupLayer, char c, ArrayList<RoundBracketStart> groupStartList) throws RegexSyntaxError {
+        super(patt, index, groupLayer, c, groupStartList);
     }
 
     public static boolean isLiteralCharacter(char c) {

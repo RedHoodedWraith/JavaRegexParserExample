@@ -2,11 +2,13 @@ package RegexParts.Group;
 
 import RegexParts.Exceptions.RegexSyntaxError;
 
+import java.util.ArrayList;
+
 public class RoundBracketEnd extends RoundBracketTemplate {
 
-    public RoundBracketEnd(char[] patt, int index, int groupLayer, RoundBracketStart groupStart) throws RegexSyntaxError {
+    public RoundBracketEnd(char[] patt, int index, int groupLayer, ArrayList<RoundBracketStart> groupStartList) throws RegexSyntaxError {
         super(patt, index, --groupLayer,')', true, true,
-                groupStart, '.', '|', '*', '(', ')');
+                groupStartList, '.', '|', '*', '(', ')');
     }
 
     @Override
