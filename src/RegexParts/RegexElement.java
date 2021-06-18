@@ -4,6 +4,7 @@ import RegexParts.Character.AnyCharacter;
 import RegexParts.Character.LiteralCharacter;
 import RegexParts.Condition.ConditionalOR;
 import RegexParts.Exceptions.RegexIncompleteGroupError;
+import RegexParts.Exceptions.RegexOtherError;
 import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.Group.RoundBracketEnd;
 import RegexParts.Group.RoundBracketStart;
@@ -12,6 +13,7 @@ import RegexParts.Quantifier.ZeroOrMore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Stack;
 
 public abstract class RegexElement {
 
@@ -34,9 +36,6 @@ public abstract class RegexElement {
 
     private final RegexElement nextElement;
 
-    // List of Round Bracket Start Elements
-    public static final ArrayList<RoundBracketStart> groupStartList = new ArrayList<>();
-
     protected RegexElement(char[] patt, int index, int groupLayer, char tokenChar, boolean nextTokenCanBeLiteral,
                            boolean nextTokenCanBeEnd, Character... validNextTokensRaw)
             throws RegexSyntaxError {
@@ -48,14 +47,14 @@ public abstract class RegexElement {
 
         int nextIndex = index + 1;
         if(checkValidRegexSyntax(patt, index)) {
-            this.nextElement = buildRegexElement(patt, nextIndex, groupLayer, groupStartList);
+            this.nextElement = buildRegexElement(patt, nextIndex, groupLayer);
         } else {
             char[] remainingPatt = Arrays.copyOfRange(patt, nextIndex, patt.length);
             throw new RegexSyntaxError(tokenChar, index, remainingPatt, patt);
         }
     }
 
-    protected static RegexElement buildRegexElement(char[] patt, int index, int groupLayer, ArrayList<RoundBracketStart> groupStartList) throws RegexSyntaxError {
+    protected static RegexElement buildRegexElement(char[] patt, int index, int groupLayer) throws RegexSyntaxError {
         assert index >= 0 && index <= patt.length;
 
         // Reached String End
@@ -84,10 +83,7 @@ public abstract class RegexElement {
     }
 
     public static RegexElement buildRegexElement(char[] patt) throws RegexSyntaxError {
-        ArrayList<RoundBracketStart> groupStartList = new ArrayList<>();
-        groupStartList.add(null);
-        assert groupStartList.get(0) == null;
-        return buildRegexElement(patt, 0, 0, groupStartList);
+        return buildRegexElement(patt, 0, 0);
     }
 
     public static boolean isNextTargetCharEnd(char[] target, int currentIndex) {
@@ -101,7 +97,7 @@ public abstract class RegexElement {
     public abstract int evaluate(char[] inputTarget, int index);
 
     public boolean evaluateTarget(String input) {
-        return this.evaluate(input.toCharArray(), 0) > 0;
+        return this.evaluate(input.toCharArray(), 0) > FAIL_INDEX_VALUE;
     }
 
     protected int evaluateNextTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex) {
@@ -149,5 +145,29 @@ public abstract class RegexElement {
 
         char nextC = patt[index + 1];
         return isTokenChar(c) && isNextTokenValid(nextC);
+    }
+
+    public static void pairStartEndGroupElements(RegexElement firstElement, char[] pattern) throws RegexOtherError {
+        RegexElement elm = firstElement;
+        int layer = 0;
+        Stack<RoundBracketStart> startBracketCollect = new Stack<>();
+
+        while(elm != null) {
+            if(elm instanceof RoundBracketStart) {
+                startBracketCollect.push((RoundBracketStart) elm);
+                layer++;
+            } else if(elm instanceof RoundBracketEnd) {
+                ((RoundBracketEnd) elm).setStartOfCurrentGroup(startBracketCollect.pop());
+                layer--;
+            }
+            if(layer != startBracketCollect.size())
+                throw new RegexOtherError("Bracket Pairing Failed",
+                        "Layer Count and Stack Size do not match.\n\t" +
+                        "Layer: " + layer + "\n\tLayer Size: " + startBracketCollect.size());
+            elm = elm.getNextElement();
+        }
+
+        if(layer != 0)
+            throw new RegexIncompleteGroupError(pattern);
     }
 }

@@ -1,3 +1,4 @@
+import RegexParts.Exceptions.RegexOtherError;
 import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.RegexElement;
 import org.junit.Test;
@@ -115,6 +116,9 @@ public class RegexBuilderTest {
                 fail("The following pattern is expected to be invalid: " + p);
             } catch (RegexSyntaxError regexSyntaxError) {
 
+            } catch (RegexOtherError regexOtherError) {
+                regexOtherError.printStackTrace();
+                fail(regexOtherError.getMessage());
             }
         }
     }
@@ -141,6 +145,9 @@ public class RegexBuilderTest {
                 e.printStackTrace();
                 fail("Array Related Error:\n\tID: " + id + "\n\tRegex: " + p + "\n\tTarget: " + t +
                         "\n\tExpected: " + s + "\n");
+            } catch (RegexOtherError regexOtherError) {
+                regexOtherError.printStackTrace();
+                fail(regexOtherError.getMessage());
             }
         }
     }

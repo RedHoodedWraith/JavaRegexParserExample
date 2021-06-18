@@ -1,10 +1,8 @@
 package RegexParts.Character;
 
 import RegexParts.Exceptions.RegexSyntaxError;
-import RegexParts.Group.RoundBracketStart;
 import RegexParts.RegexElement;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class RegexCharacter extends RegexElement {

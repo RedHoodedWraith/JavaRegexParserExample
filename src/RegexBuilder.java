@@ -1,3 +1,4 @@
+import RegexParts.Exceptions.RegexOtherError;
 import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.RegexElement;
 
@@ -10,9 +11,11 @@ public class RegexBuilder {
 
     public static final String DEFAULT_PATTERN_FILE = "expressions.txt";
 
-    public static RegexElement buildRegex(String regexPatternStr) throws RegexSyntaxError {
+    public static RegexElement buildRegex(String regexPatternStr) throws RegexOtherError {
         char[] regexPattern = regexPatternStr.toCharArray();
-        return RegexElement.buildRegexElement(regexPattern);
+        RegexElement elm = RegexElement.buildRegexElement(regexPattern);
+        RegexElement.pairStartEndGroupElements(elm, regexPattern);
+        return elm;
     }
 
     public static ArrayList<String> importPatterns(String filePathLoc) throws FileNotFoundException {
@@ -41,6 +44,9 @@ public class RegexBuilder {
             } catch (RegexSyntaxError regexSyntaxError) {
                 System.out.println("[SYNTAX ERROR]");
                 regexSyntaxError.printStackTrace();
+            } catch (RegexOtherError regexOtherError) {
+                System.out.println("[OTHER PARSING ERROR]");
+                regexOtherError.printStackTrace();
             }
             i++;
         }

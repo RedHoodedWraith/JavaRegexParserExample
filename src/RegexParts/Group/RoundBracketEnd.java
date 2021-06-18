@@ -5,18 +5,11 @@ import RegexParts.Quantifier.ZeroOrMore;
 
 public class RoundBracketEnd extends RoundBracketTemplate {
 
-    private final RoundBracketStart startOfCurrentGroup;
+    private RoundBracketStart startOfCurrentGroup;
 
     public RoundBracketEnd(char[] patt, int index, int groupLayer) throws RegexSyntaxError {
         super(patt, index, --groupLayer,')', true, true,
                 '.', '|', '*', '(', ')');
-
-        try {
-            startOfCurrentGroup = groupStartList.remove(groupLayer);
-        } catch (IndexOutOfBoundsException e) {
-            throw new IndexOutOfBoundsException("Requested Invalid Index: " + (groupLayer) +
-                    "\nGroup Start Element List Size: " + groupStartList.size());
-        }
     }
 
     private boolean isNextTargetRepeatable() {
@@ -25,6 +18,10 @@ public class RoundBracketEnd extends RoundBracketTemplate {
 
     public RoundBracketStart getStartOfCurrentGroup() {
         return startOfCurrentGroup;
+    }
+
+    public void setStartOfCurrentGroup(RoundBracketStart startOfCurrentGroup) {
+        this.startOfCurrentGroup = startOfCurrentGroup;
     }
 
     @Override
