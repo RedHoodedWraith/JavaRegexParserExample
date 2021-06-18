@@ -123,8 +123,8 @@ public abstract class RegexElement {
         return evaluateTargetWithElement(this.getNextElement(), inputTarget, currentIndex, resultFromPreviousElement);
     }
 
-    protected int evaluateNextTargetWithNextElement(char[] inputTarget, int currentIndex, boolean resultFromPreviousElement) {
-        return evaluateTargetWithElement(this.getNextElement(), inputTarget, ++currentIndex, resultFromPreviousElement);
+    protected int evaluateNextTargetWithNextElement(char[] inputTarget, int currentIndex) {
+        return evaluateTargetWithElement(this.getNextElement(), inputTarget, ++currentIndex, true);
     }
 
     public boolean isTokenChar(char c) {

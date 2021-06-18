@@ -12,6 +12,10 @@ public class ConditionalOR extends RegexElement {
 
     @Override
     public int evaluate(char[] inputTarget, int index, boolean resultFromPreviousElement) {
-        return evaluateTargetWithNextElement(inputTarget, index, resultFromPreviousElement);
+        if(resultFromPreviousElement)
+            return index;
+
+        // Reattempt Target Evaluation with remainder of Pattern Elements
+        return evaluateTargetWithNextElement(inputTarget, 0, false);
     }
 }

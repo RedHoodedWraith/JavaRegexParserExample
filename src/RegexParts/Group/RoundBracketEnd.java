@@ -34,16 +34,16 @@ public class RoundBracketEnd extends RoundBracketTemplate {
         // Use current index value if post recursion value is FAIL_INDEX_VALUE
         updatedIndex = updatedIndex != FAIL_INDEX_VALUE ? updatedIndex : index;
 
-        // If Next Pattern Token is Not End (If Next Token is Not Null)
+        // If There is a Next Pattern Element
         if(!isNextElementNull()) {
             // If Recursive Group Search Succeeded
             if(updatedIndex < 0)
                 // Check Next Element with next Target Token with original index
-                return evaluateTargetWithNextElement(inputTarget, index, resultFromPreviousElement);
+                return evaluateTargetWithNextElement(inputTarget, index, true);
             // Check Next Element with next Target Token with updated index
-            return evaluateTargetWithNextElement(inputTarget, updatedIndex, resultFromPreviousElement);
+            return evaluateTargetWithNextElement(inputTarget, updatedIndex, true);
         }
-        // If Next Target Token is End
+        // If there are no more Pattern Elements and If Next Target Token is End
         else if(isFinalTargetChar(inputTarget, updatedIndex)) {
             // Returns Current Index if the next Target Token can the end
              return isPastMaxIndex(inputTarget, updatedIndex) ? updatedIndex : FAIL_INDEX_VALUE;

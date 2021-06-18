@@ -1,5 +1,6 @@
 package RegexParts.Character;
 
+import RegexParts.Condition.ConditionalOR;
 import RegexParts.Exceptions.RegexSyntaxError;
 import RegexParts.RegexElement;
 
@@ -27,18 +28,24 @@ public abstract class RegexCharacter extends RegexElement {
         // (dependent on sub class)
         if(isValidToken(c)) {
 
-            // If Next Element is Not End (If Next Token is Not Null)
+            // If There is a Next Pattern Element
             if(!isNextElementNull()) {
-                // Check Next Element with next Target Token
-                return evaluateNextTargetWithNextElement(inputTarget, index, resultFromPreviousElement);
+                // Check Next Element with next Target Token with true/regex passed state
+                return evaluateNextTargetWithNextElement(inputTarget, index);
             }
-            // If This is the final Target Token
+            // Returns with index If This is the final Target Token
             else if(isFinalTargetChar(inputTarget, index)) {
-                // Returns current index if the current Target Token is allowed to be the final one
-                return isNextElementNull() ? index : FAIL_INDEX_VALUE;
+                return index;
             }
 
         }
+        // If evaluation failed and next element is Conditional
+        else if(!isNextElementNull() && getNextElement() instanceof ConditionalOR) {
+            return evaluateTargetWithNextElement(inputTarget, index, false);
+        }
+
+
+
 
         // Returns FAIL_INDEX_VALUE if None of the conditions above were met
         return FAIL_INDEX_VALUE;
