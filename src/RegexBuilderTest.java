@@ -63,26 +63,25 @@ public class RegexBuilderTest {
             assertEquals(expressionLine, expectedRegex);
 
             switch (expectedCondition) {
-                case RESULT_SE -> {
+                case RESULT_SE:
                     invalidRegexes.add(expressionLine);
                     allRegexes.add(expressionLine);
                     evaluationList.add(false);
-                }
-                case RESULT_YES -> {
+                    break;
+                case RESULT_YES:
                     validRegexes.add(expressionLine);
                     allRegexes.add(expressionLine);
                     evaluationList.add(true);
-                }
-                case RESULT_NO -> {
+                    break;
+                case RESULT_NO:
                     validRegexes.add(expressionLine);
                     allRegexes.add(expressionLine);
                     evaluationList.add(false);
-                }
-                default -> {
+                    break;
+                default:
                     unknownRegexes.add(expressionLine);
                     allRegexes.add(expressionLine);
                     evaluationList.add(false);
-                }
             }
         }
 

@@ -72,14 +72,20 @@ public abstract class RegexElement {
             throw new RegexSyntaxError(c, index, patt, patt);
         }
 
-        return switch (c) {
-            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index, groupLayer);
-            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index, groupLayer);
-            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index, groupLayer);
-            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index, groupLayer);
-            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index, groupLayer);
-            default -> new LiteralCharacter(patt, index, groupLayer, c);
-        };
+        switch (c) {
+            case SPEC_CHAR_ANY:
+                return new AnyCharacter(patt, index, groupLayer);
+            case SPEC_CHAR_PIPE:
+                return new ConditionalOR(patt, index, groupLayer);
+            case SPEC_CHAR_QUANT:
+                return new ZeroOrMore(patt, index, groupLayer);
+            case SPEC_CHAR_GROUP_OPEN:
+                return new RoundBracketStart(patt, index, groupLayer);
+            case SPEC_CHAR_GROUP_CLOSE:
+                return new RoundBracketEnd(patt, index, groupLayer);
+            default:
+                return new LiteralCharacter(patt, index, groupLayer, c);
+        }
     }
 
     public static RegexElement buildRegexElement(char[] patt) throws RegexSyntaxError {
