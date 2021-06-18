@@ -12,8 +12,10 @@ public class AnyCharacter extends RegexCharacter {
     public boolean evaluate(char[] inputTarget, int index) {
         char c = inputTarget[index];
 
+        
+
         if(isLiteralCharacter(c)) {
-            if(isNextTokenEnd())
+            if(isNextElementEnd())
                 return index == inputTarget.length-1;
 
             return this.getNextElement().evaluate(inputTarget, index + 1);

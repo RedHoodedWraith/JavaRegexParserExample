@@ -82,6 +82,10 @@ public abstract class RegexElement {
         return buildRegexElement(patt, 0, 0);
     }
 
+    public static boolean isNextTargetCharEnd(char[] target, int currentIndex) {
+        return currentIndex + 1 >= target.length;
+    }
+
     public static boolean isLiteralCharacter(char c) {
         return LiteralCharacter.isLiteralCharacter(c);
     }
@@ -96,11 +100,15 @@ public abstract class RegexElement {
         return c == tokenChar;
     }
 
-    public boolean isNextTokenEnd() {
+    public boolean isNextElementEnd() {
         return getNextElement() == null;
     }
 
-    protected boolean isNextTokenCanBeEnd() {
+    public boolean canNextTargetTokenBeEnd() {
+        return isNextElementEnd();
+    }
+
+    protected boolean canNextElementBeEnd() {
         return nextTokenCanBeEnd;
     }
 
@@ -118,7 +126,7 @@ public abstract class RegexElement {
         char c = patt[index];
 
         if(index == patt.length - 1) {
-            return isTokenChar(c) && isNextTokenCanBeEnd();
+            return isTokenChar(c) && canNextElementBeEnd();
         }
 
         char nextC = patt[index + 1];
