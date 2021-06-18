@@ -24,9 +24,7 @@ public abstract class RegexCharacter extends RegexElement {
 
         // Throws an exception if an index entered is equal or greater than the Target Array length
         if(index >= iTLength) {
-            throw new NullPointerException("Invalid Index: " + index +
-                    "\nTarget Length: " + iTLength +
-                    "\nTarget: " + Arrays.toString(inputTarget));
+            return FAIL_INDEX_VALUE;
         }
 
         char c = inputTarget[index];
@@ -35,16 +33,17 @@ public abstract class RegexCharacter extends RegexElement {
         // (dependent on sub class)
         if(isValidToken(c)) {
 
-            // If Next Target Token is End
-            if(isNextTargetCharEnd(inputTarget, index)) {
-                // Returns current index if the next Target Token can the end
-                return canNextTargetTokenBeEnd() ? index : FAIL_INDEX_VALUE;
-            }
-            // If Next Pattern Token is Not End (If Next Token is Not Null)
-            else if(!isNextElementEnd()) {
+            // If Next Element is Not End (If Next Token is Not Null)
+            if(!isNextElementNull()) {
                 // Check Next Element with next Target Token
                 return evaluateNextTargetWithNextElement(inputTarget, index);
             }
+            // If This is the final Target Token
+            else if(isFinalTargetChar(inputTarget, index)) {
+                // Returns current index if the current Target Token is allowed to be the final one
+                return isNextElementNull() ? index : FAIL_INDEX_VALUE;
+            }
+
         }
 
         // Returns FAIL_INDEX_VALUE if None of the conditions above were met

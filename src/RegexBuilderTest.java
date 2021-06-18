@@ -5,9 +5,9 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RegexBuilderTest {
 
@@ -130,24 +130,22 @@ public class RegexBuilderTest {
             int id = i + 1;
             RegexElement r;
             String p = allRegexes.get(i), t = allTestTargets.get(i);
-            boolean s = evaluationList.get(i), result;
+            boolean s = evaluationList.get(i);
+            int result;
 
             try {
                 r = RegexBuilder.buildRegex(p);
-                if(s != (result = r.evaluateTarget(t))){
+                if(s != ((result = r.evaluateTarget(t)) > RegexElement.FAIL_INDEX_VALUE)){
                     fail("\n\tID: " + id + "\n\tRegex: " + p + "\n\tTarget: " + t +
                             "\n\tResult: " + result + "\n\tExpected: " + s + "\n");
                 }
             } catch (RegexSyntaxError regexSyntaxError) {
                 if(s)
                     fail("Syntax Error on Regex expected to Pass: " + p);
-            } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
+            } catch (NullPointerException | ArrayIndexOutOfBoundsException | RegexOtherError e) {
                 e.printStackTrace();
                 fail("Array Related Error:\n\tID: " + id + "\n\tRegex: " + p + "\n\tTarget: " + t +
                         "\n\tExpected: " + s + "\n");
-            } catch (RegexOtherError regexOtherError) {
-                regexOtherError.printStackTrace();
-                fail(regexOtherError.getMessage());
             }
         }
     }

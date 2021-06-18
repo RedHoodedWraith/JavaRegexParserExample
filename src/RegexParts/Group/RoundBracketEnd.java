@@ -26,6 +26,7 @@ public class RoundBracketEnd extends RoundBracketTemplate {
 
     @Override
     public int evaluate(char[] inputTarget, int index) {
+        int iTLength = inputTarget.length;
 
         // Repeats if Next in Pattern is Zero or More
         int updatedIndex = isNextTargetRepeatable() ?
@@ -34,19 +35,19 @@ public class RoundBracketEnd extends RoundBracketTemplate {
         // Use current index value if post recursion value is FAIL_INDEX_VALUE
         updatedIndex = updatedIndex != FAIL_INDEX_VALUE ? updatedIndex : index;
 
-        // If Next Target Token is End
-        if(isNextTargetCharEnd(inputTarget, index)) {
-            // Returns true if the next Target Token can the end
-            return canNextTargetTokenBeEnd() ? updatedIndex : FAIL_INDEX_VALUE;
-        }
         // If Next Pattern Token is Not End (If Next Token is Not Null)
-        else if(!isNextElementEnd()) {
+        if(!isNextElementNull()) {
             // If Recursive Group Search Succeeded
             if(updatedIndex < 0)
-                // Check Next Element with next Target Token with updated index
-                return evaluateNextTargetWithNextElement(inputTarget, index);
-            // Check Next Element with next Target Token with originalIndex
-            return evaluateNextTargetWithNextElement(inputTarget, index);
+                // Check Next Element with next Target Token with original index
+                return evaluateTargetWithNextElement(inputTarget, index);
+            // Check Next Element with next Target Token with updated index
+            return evaluateTargetWithNextElement(inputTarget, updatedIndex);
+        }
+        // If Next Target Token is End
+        else if(isFinalTargetChar(inputTarget, updatedIndex)) {
+            // Returns Current Index if the next Target Token can the end
+             return isPastMaxIndex(inputTarget, updatedIndex) ? updatedIndex : FAIL_INDEX_VALUE;
         }
 
         // Returns FAIL_INDEX_VALUE if None of the conditions above were met

@@ -86,8 +86,16 @@ public abstract class RegexElement {
         return buildRegexElement(patt, 0, 0);
     }
 
-    public static boolean isNextTargetCharEnd(char[] target, int currentIndex) {
-        return currentIndex + 1 >= target.length;
+    public static boolean isPastMaxIndex(char[] target, int index) {
+        return index >= target.length;
+    }
+
+    public static boolean isTargetCharEnd(char[] target, int currentIndex) {
+        return isPastMaxIndex(target, currentIndex);
+    }
+
+    public static boolean isFinalTargetChar(char[] target, int currentIndex) {
+        return isTargetCharEnd(target, currentIndex + 1);
     }
 
     public static boolean isLiteralCharacter(char c) {
@@ -96,8 +104,8 @@ public abstract class RegexElement {
 
     public abstract int evaluate(char[] inputTarget, int index);
 
-    public boolean evaluateTarget(String input) {
-        return this.evaluate(input.toCharArray(), 0) > FAIL_INDEX_VALUE;
+    public int evaluateTarget(String input) {
+        return this.evaluate(input.toCharArray(), 0);
     }
 
     protected int evaluateNextTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex) {
@@ -105,24 +113,28 @@ public abstract class RegexElement {
     }
 
     protected int evaluateNextTargetWithNextElement(char[] inputTarget, int currentIndex) {
-        if(isNextElementEnd())
+        if(isNextElementNull())
             return currentIndex;
         return this.evaluateNextTargetWithElement(this.getNextElement(), inputTarget, currentIndex);
+    }
+
+    protected int evaluateTargetWithNextElement(char[] inputTarget, int currentIndex) {
+        return getNextElement().evaluate(inputTarget, currentIndex);
     }
 
     public boolean isTokenChar(char c) {
         return c == tokenChar;
     }
 
-    public boolean isNextElementEnd() {
+    public boolean isNextElementNull() {
         return getNextElement() == null;
     }
 
-    public boolean canNextTargetTokenBeEnd() {
-        return isNextElementEnd();
+    public boolean canTargetTokenBeEnd() {
+        return isNextElementNull();
     }
 
-    protected boolean canNextElementBeEnd() {
+    protected boolean canElementBeEnd() {
         return nextTokenCanBeEnd;
     }
 
@@ -140,7 +152,7 @@ public abstract class RegexElement {
         char c = patt[index];
 
         if(index == patt.length - 1) {
-            return isTokenChar(c) && canNextElementBeEnd();
+            return isTokenChar(c) && canElementBeEnd();
         }
 
         char nextC = patt[index + 1];
