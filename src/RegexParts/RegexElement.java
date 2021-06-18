@@ -15,6 +15,8 @@ import java.util.Collections;
 
 public abstract class RegexElement {
 
+    public static final int FAIL_INDEX_VALUE = -1;
+
     public static final char SPEC_CHAR_ANY = '.',
             SPEC_CHAR_PIPE = '|', SPEC_CHAR_QUANT = '*',
             SPEC_CHAR_GROUP_OPEN = '(', SPEC_CHAR_GROUP_CLOSE = ')';
@@ -32,8 +34,11 @@ public abstract class RegexElement {
 
     private final RegexElement nextElement;
 
+    // List of Round Bracket Start Elements
+    public static final ArrayList<RoundBracketStart> groupStartList = new ArrayList<>();
+
     protected RegexElement(char[] patt, int index, int groupLayer, char tokenChar, boolean nextTokenCanBeLiteral,
-                           boolean nextTokenCanBeEnd, ArrayList<RoundBracketStart> groupStartList, Character... validNextTokensRaw)
+                           boolean nextTokenCanBeEnd, Character... validNextTokensRaw)
             throws RegexSyntaxError {
         this.tokenChar = tokenChar;
         this.nextTokenCanBeLiteral = nextTokenCanBeLiteral;
@@ -69,18 +74,19 @@ public abstract class RegexElement {
         }
 
         return switch (c) {
-            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index, groupLayer, groupStartList);
-            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index, groupLayer, groupStartList);
-            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index, groupLayer, groupStartList);
-            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index, groupLayer, groupStartList);
-            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index, groupLayer, groupStartList);
-            default -> new LiteralCharacter(patt, index, groupLayer, c, groupStartList);
+            case SPEC_CHAR_ANY -> new AnyCharacter(patt, index, groupLayer);
+            case SPEC_CHAR_PIPE -> new ConditionalOR(patt, index, groupLayer);
+            case SPEC_CHAR_QUANT -> new ZeroOrMore(patt, index, groupLayer);
+            case SPEC_CHAR_GROUP_OPEN -> new RoundBracketStart(patt, index, groupLayer);
+            case SPEC_CHAR_GROUP_CLOSE -> new RoundBracketEnd(patt, index, groupLayer);
+            default -> new LiteralCharacter(patt, index, groupLayer, c);
         };
     }
 
     public static RegexElement buildRegexElement(char[] patt) throws RegexSyntaxError {
         ArrayList<RoundBracketStart> groupStartList = new ArrayList<>();
         groupStartList.add(null);
+        assert groupStartList.get(0) == null;
         return buildRegexElement(patt, 0, 0, groupStartList);
     }
 
@@ -92,10 +98,20 @@ public abstract class RegexElement {
         return LiteralCharacter.isLiteralCharacter(c);
     }
 
-    public abstract boolean evaluate(char[] inputTarget, int index);
+    public abstract int evaluate(char[] inputTarget, int index);
 
-    public boolean evaluate(String input) {
-        return this.evaluate(input.toCharArray(), 0);
+    public boolean evaluateTarget(String input) {
+        return this.evaluate(input.toCharArray(), 0) > 0;
+    }
+
+    protected int evaluateNextTargetWithElement(RegexElement element, char[] inputTarget, int currentIndex) {
+        return element.evaluate(inputTarget, ++currentIndex);
+    }
+
+    protected int evaluateNextTargetWithNextElement(char[] inputTarget, int currentIndex) {
+        if(isNextElementEnd())
+            return currentIndex;
+        return this.evaluateNextTargetWithElement(this.getNextElement(), inputTarget, currentIndex);
     }
 
     public boolean isTokenChar(char c) {

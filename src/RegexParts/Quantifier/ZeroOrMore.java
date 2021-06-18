@@ -8,13 +8,13 @@ import java.util.ArrayList;
 
 public class ZeroOrMore extends RegexElement {
 
-    public ZeroOrMore(char[] patt, int index, int groupLayer, ArrayList<RoundBracketStart> groupStartList) throws RegexSyntaxError {
+    public ZeroOrMore(char[] patt, int index, int groupLayer) throws RegexSyntaxError {
         super(patt, index, groupLayer, '*', true, true,
-                groupStartList, '.', '|', '(', ')');
+                '.', '|', '(', ')');
     }
 
     @Override
-    public boolean evaluate(char[] inputTarget, int index) {
-        return false;
+    public int evaluate(char[] inputTarget, int index) {
+        return -1;
     }
 }

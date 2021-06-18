@@ -9,19 +9,19 @@ import java.util.Arrays;
 
 public abstract class RegexCharacter extends RegexElement {
 
-    protected RegexCharacter(char[] patt, int index, int groupLayer, char tokenChar, ArrayList<RoundBracketStart> groupStartList) throws RegexSyntaxError {
-        super(patt, index, groupLayer, tokenChar, true, true, groupStartList, RegexElement.SPECIAL_CHARACTERS);
+    protected RegexCharacter(char[] patt, int index, int groupLayer, char tokenChar) throws RegexSyntaxError {
+        super(patt, index, groupLayer, tokenChar, true, true, RegexElement.SPECIAL_CHARACTERS);
     }
 
     protected abstract boolean isValidToken(char c);
 
     @Override
-    public boolean evaluate(char[] inputTarget, int index) {
+    public int evaluate(char[] inputTarget, int index) {
         int iTLength = inputTarget.length;
 
-        // Returns false if Target Array is empty (length is zero)
+        // Returns FAIL_INDEX_VALUE if Target Array is empty (length is zero)
         if(iTLength <= 0) {
-            return false;
+            return FAIL_INDEX_VALUE;
         }
 
         // Throws an exception if an index entered is equal or greater than the Target Array length
@@ -39,17 +39,17 @@ public abstract class RegexCharacter extends RegexElement {
 
             // If Next Target Token is End
             if(isNextTargetCharEnd(inputTarget, index)) {
-                // Returns true if the next Target Token can the end
-                return canNextTargetTokenBeEnd();
+                // Returns current index if the next Target Token can the end
+                return canNextTargetTokenBeEnd() ? index : FAIL_INDEX_VALUE;
             }
             // If Next Pattern Token is Not End (If Next Token is Not Null)
             else if(!isNextElementEnd()) {
                 // Check Next Element with next Target Token
-                return this.getNextElement().evaluate(inputTarget, index + 1);
+                return evaluateNextTargetWithNextElement(inputTarget, index);
             }
         }
 
-        // Returns False if None of the conditions above were met
-        return false;
+        // Returns FAIL_INDEX_VALUE if None of the conditions above were met
+        return FAIL_INDEX_VALUE;
     }
 }

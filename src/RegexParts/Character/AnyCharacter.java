@@ -8,8 +8,8 @@ import java.util.Arrays;
 
 public class AnyCharacter extends RegexCharacter {
 
-    public AnyCharacter(char[] patt, int index, int groupLayer, ArrayList<RoundBracketStart> groupStartList) throws RegexSyntaxError {
-        super(patt, index, groupLayer,'.', groupStartList);
+    public AnyCharacter(char[] patt, int index, int groupLayer) throws RegexSyntaxError {
+        super(patt, index, groupLayer,'.');
     }
 
     @Override

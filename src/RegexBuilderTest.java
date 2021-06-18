@@ -94,8 +94,15 @@ public class RegexBuilderTest {
     @Test
     public void validSyntaxTest() throws RegexSyntaxError, FileNotFoundException {
         prepareTests();
+        int id = 1;
         for(String p : validRegexes){
-            RegexBuilder.buildRegex(p);
+            try {
+                RegexBuilder.buildRegex(p);
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail("Error Building Regex [" + id + "]: " + p);
+            }
+            id++;
         }
     }
 
@@ -123,7 +130,7 @@ public class RegexBuilderTest {
 
             try {
                 r = RegexBuilder.buildRegex(p);
-                if(s != (result = r.evaluate(t))){
+                if(s != (result = r.evaluateTarget(t))){
                     fail("\n\tID: " + id + "\n\tRegex: " + p + "\n\tTarget: " + t +
                             "\n\tResult: " + result + "\n\tExpected: " + s + "\n");
                 }
