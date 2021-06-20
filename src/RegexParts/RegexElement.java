@@ -119,7 +119,7 @@ public abstract class RegexElement {
 
     public int skipToMiniEnd(char[] inputTarget, int index, boolean resultFromPreviousElement) {
         RegexElement elm = this;
-        while(!(elm == null || elm instanceof ConditionalOR)) {
+        while(!(elm == null || elm instanceof ConditionalOR || elm instanceof RoundBracketStart)) {
             elm = elm.getNextElement();
         }
         return evaluateTargetWithElement(elm, inputTarget, index, resultFromPreviousElement);

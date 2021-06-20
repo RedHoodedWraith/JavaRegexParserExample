@@ -40,13 +40,11 @@ public abstract class RegexCharacter extends RegexElement {
 
             // If There is a Next Pattern Element
             if(!isNextElementNull()) {
-                if(!(this.getNextElement() instanceof ConditionalOR))
                 // Check Next Element with next Target Token with true/regex passed state
+                if(!(this.getNextElement() instanceof ConditionalOR))
                     return evaluateNextTargetWithNextElement(inputTarget, index, true);
-                else {
-                    if(!isPastMaxIndex(inputTarget, index + 1)) {
-                        return FAIL_INDEX_VALUE;
-                    }
+                else if(!isPastMaxIndex(inputTarget, index + 1)) {
+                    return FAIL_INDEX_VALUE;
                 }
             }
             // Returns with index If This is the final Target Token
